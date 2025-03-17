@@ -7,10 +7,10 @@ COPY pyproject.toml .
 COPY main.py .
 COPY README.md .
 
-# Install UV globally and then install project dependencies using uv CLI
-RUN pip install uv && uv install
+# Install UV and project dependencies using uv's pip subcommand
+RUN pip install uv && uv pip install
 
-# Expose port 8000 (adjust if needed)
+# Expose the port (adjust if needed)
 EXPOSE 8000
 
 # Start the application using UV
