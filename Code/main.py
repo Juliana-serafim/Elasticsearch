@@ -25,6 +25,29 @@ class Document(BaseModel):
     views: Optional[int] = 0
 
 
+# Root endpoint for a friendly welcome message.
+@app.get("/", summary="Welcome", tags=["Root"])
+async def read_root():
+    return {
+        "message": "Welcome to the Elasticsearch API. See /docs for API documentation."
+    }
+
+
+# Endpoint to list all documents using a match_all query.
+@app.get("/documents", summary="List all documents", tags=["Documents"])
+async def list_documents():
+    """
+    List all documents from the 'documents' index.
+    """
+    try:
+        response = es.search(index="documents", body={"query": {"match_all": {}}})
+        hits = response.get("hits", {}).get("hits", [])
+        return {"results": [hit["_source"] for hit in hits]}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# Endpoint to index a new document.
 @app.post("/documents", summary="Index a new document", tags=["Documents"])
 async def create_document(document: Document):
     """
@@ -38,6 +61,7 @@ async def create_document(document: Document):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+# Endpoint to retrieve a document by its ID.
 @app.get("/documents/{doc_id}", summary="Retrieve a document", tags=["Documents"])
 async def get_document(doc_id: str):
     """
@@ -52,6 +76,7 @@ async def get_document(doc_id: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+# Endpoint to perform a search on documents.
 @app.get("/search", summary="Search documents", tags=["Search"])
 async def search_documents(q: str):
     """

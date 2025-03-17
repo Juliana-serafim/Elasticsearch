@@ -1,4 +1,4 @@
-FROM python:3.9-slim
+FROM python:3.12-slim
 
 WORKDIR /app
 
@@ -7,11 +7,11 @@ COPY pyproject.toml .
 COPY main.py .
 COPY README.md .
 
-# Install UV and project dependencies using uv's pip subcommand
-RUN pip install uv && uv pip install
+# Install UV and use --system flag to install without a virtual environment
+RUN pip install uv && uv pip install --system .
 
-# Expose the port (adjust if needed)
+# Expose the port
 EXPOSE 8000
 
-# Start the application using UV
-CMD ["uv", "run"]
+# Start the application
+CMD ["python", "main.py"]
